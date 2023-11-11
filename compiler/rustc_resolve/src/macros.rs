@@ -945,6 +945,7 @@ impl<'a, 'tcx> Resolver<'a, 'tcx> {
             compile_declarative_macro(self.tcx.sess, self.tcx.features(), item, edition);
 
         if let Some(builtin_name) = result.builtin_name {
+            dbg!(&builtin_name);
             // The macro was marked with `#[rustc_builtin_macro]`.
             if let Some(builtin_macro) = self.builtin_macros.get_mut(&builtin_name) {
                 // The macro is a built-in, replace its expander function

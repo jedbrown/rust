@@ -4,33 +4,34 @@ use crate::util::check_builtin_macro_attribute;
 //    global_fn_name, AllocatorMethod, AllocatorMethodInput, AllocatorTy, ALLOCATOR_METHODS,
 //};
 //use rustc_middle::middle::autodiff_attrs::{AutoDiffItem, DiffActivity, DiffMode};
-//use rustc_ast::ptr::P;
+use rustc_ast::ptr::P;
 use rustc_ast::{self as ast};//, AttrVec, Expr, FnHeader, FnSig, Generics, Param, StmtKind};
 //use rustc_ast::{Fn, ItemKind, Mutability, Stmt, Ty, TyKind, Unsafe};
 use rustc_ast::ItemKind;
 use rustc_expand::base::{Annotatable, ExtCtxt};
+use rustc_span::symbol::Ident;
 //use rustc_span::symbol::{kw, sym, Ident, Symbol};
 use rustc_span::symbol::sym;
 use rustc_span::Span;
-//use thin_vec::{thin_vec, ThinVec};
+use thin_vec::thin_vec;
+use rustc_span::DUMMY_SP;
 
 
-pub fn expand(
+pub fn expand_ad(
     ecx: &mut ExtCtxt<'_>,
-    _span: Span,
+    span: Span,
     meta_item: &ast::MetaItem,
     item: Annotatable,
 ) -> Vec<Annotatable> {
+    dbg!("rust autodiff!");
     check_builtin_macro_attribute(ecx, meta_item, sym::autodiff);
     let orig_item = item.clone();
-    // FnSig
-    // inner_tokens
-    //ItemKind::Fn(Box<Fn>)
     // Allow using `#[autodiff(...)]` on a Fn
-    let (item, _ty_span) = if let Annotatable::Item(item) = &item
+    // add types
+    let (item, fn_sig, _ty_span): (&P<rustc_ast::Item>, &rustc_ast::FnSig, Span) = if let Annotatable::Item(item) = &item
         && let ItemKind::Fn(box ast::Fn { sig, .. }) = &item.kind
     {
-        (item, ecx.with_def_site_ctxt(sig.span))
+        (item, &sig, ecx.with_def_site_ctxt(sig.span))
     } else {
         ecx.sess
             .parse_sess
@@ -39,8 +40,39 @@ pub fn expand(
         return vec![orig_item];
     };
     let _span = ecx.with_def_site_ctxt(item.span);
-//    let f = AllocFnFactory { span, ty_span, global: item.ident, cx: ecx };
-    return vec![orig_item];
+
+    // WHY would you do that? Poor Enzyme
+    assert!(!fn_sig.header.asyncness.is_async());
+    assert!(!fn_sig.header.ext.is_extern());
+    let fn_sig = ast::FnSig {
+        header: ast::FnHeader {
+            unsafety: ast::Unsafe::No,
+            asyncness: ast::Async::No,
+            constness: ast::Const::No,
+            ext: ast::Extern::None,
+        },
+        decl: P::<ast::FnDecl>(ast::FnDecl {
+            inputs: thin_vec![],
+            output: ast::FnRetTy::Default(DUMMY_SP),
+        }),
+        span: DUMMY_SP,
+    };
+    let kind = ItemKind::Fn(Box::new(ast::Fn {
+        defaultness: ast::Defaultness::Final,
+        sig: fn_sig,
+        generics: ast::Generics::default(),
+        body: None,
+    }));
+    let item = ecx.item(
+        span,
+        Ident::from_str_and_span("foobar", span),
+        // thin_vec![self.cx.attr_word(sym::rustc_std_internal_symbol, self.span)]
+        thin_vec![],
+        kind,
+    );
+    let ditem = Annotatable::Item(item);
+    dbg!(&ditem);
+    return vec![orig_item, ditem];
 }
 //
 //    // Generate a bunch of new items using the AllocFnFactory

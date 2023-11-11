@@ -233,6 +233,7 @@ impl CheckAttrVisitor<'_> {
                     self.check_generic_attr(hir_id, attr, target, Target::Fn);
                     self.check_proc_macro(hir_id, target, ProcMacroKind::Derive)
                 }
+                sym::autodiff => self.check_autodiff(hir_id, attr, span, target),
                 sym::autodiff_into => self.check_autodiff(hir_id, attr, span, target),
                 _ => {}
             }
@@ -2398,6 +2399,7 @@ impl CheckAttrVisitor<'_> {
 
     /// Checks if `#[autodiff]` is applied to an item other than a foreign module.
     fn check_autodiff(&self, _hir_id: HirId, _attr: &Attribute, _span: Span, _target: Target) {
+        dbg!("check_autodiff");
         //match target {
         //    Target::ForeignMod => {}
         //    _ => {

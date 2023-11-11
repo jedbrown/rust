@@ -1417,16 +1417,18 @@ pub(crate) mod builtin {
     }
 
     /// Differentiate function
-    ///#[unstable(
-    ///    feature = "autodiff",
-    ///    issue = "29598",
-    ///    reason = "autodiff is not stable enough"
-    ///)]
-    ///#[rustc_builtin_macro]
-    ///#[macro_export]
-    ///pub macro autodiff($item:item) {
-    ///    /* compiler built-in */
-    ///}
+    #[unstable(
+        feature = "autodiff",
+        issue = "29598",
+        reason = "autodiff is not stable enough"
+    )]
+    #[allow_internal_unsafe]
+    #[allow_internal_unstable(autodiff)]
+    #[rustc_builtin_macro]
+    pub macro autodiff($item:item) {
+        /* compiler built-in */
+    }
+    //#[macro_export]
 
     /// Parses a file as an expression or an item according to the context.
     ///

@@ -2794,6 +2794,13 @@ impl Extern {
             None => Extern::Implicit(span),
         }
     }
+
+    pub fn is_extern(&self) -> bool {
+        match self {
+            Extern::None => false,
+            _ => true,
+        }
+    }
 }
 
 /// A function header.

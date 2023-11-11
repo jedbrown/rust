@@ -61,7 +61,7 @@ pub use core::prelude::v1::{RustcDecodable, RustcEncodable};
 // (no public module for them to be re-exported from).
 #[stable(feature = "builtin_macro_prelude", since = "1.38.0")]
 pub use core::prelude::v1::{
-    alloc_error_handler, bench, derive, global_allocator, test, test_case,
+    autodiff, alloc_error_handler, bench, derive, global_allocator, test, test_case,
 };
 
 #[unstable(feature = "derive_const", issue = "none")]

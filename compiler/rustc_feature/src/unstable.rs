@@ -324,6 +324,9 @@ declare_features! (
     (unstable, abi_x86_interrupt, "1.17.0", Some(40180), None),
     /// Allows additional const parameter types, such as `&'static str` or user defined types
     (incomplete, adt_const_params, "1.56.0", Some(95174), None),
+    // Manuel
+    /// Allows defining an `#[autodiff]`.
+    (unstable, autodiff, "1.29.0", Some(123445), None),
     /// Allows defining an `#[alloc_error_handler]`.
     (unstable, alloc_error_handler, "1.29.0", Some(51540), None),
     /// Allows trait methods with arbitrary self types.
