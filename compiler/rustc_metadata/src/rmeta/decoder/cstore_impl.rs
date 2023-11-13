@@ -529,7 +529,7 @@ impl CStore {
         let sess = tcx.sess;
         let _prof_timer = sess.prof.generic_activity("metadata_load_macro");
 
-        let data = self.get_crate_data(id.krate);
+        let data: crate::creader::CrateMetadataRef<'_> = self.get_crate_data(id.krate);
         if data.root.is_proc_macro_crate() {
             return LoadedMacro::ProcMacro(data.load_proc_macro(id.index, tcx));
         }

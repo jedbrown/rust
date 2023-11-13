@@ -86,6 +86,7 @@ impl<CTX: HashStableContext> HashStable<CTX> for AutoDiffAttrs {
 
 impl AutoDiffAttrs {
     pub fn inactive() -> Self {
+        dbg!("creating inactive adattrs");
         AutoDiffAttrs {
             mode: DiffMode::Inactive,
             ret_activity: DiffActivity::None,
@@ -94,6 +95,7 @@ impl AutoDiffAttrs {
     }
 
     pub fn is_active(&self) -> bool {
+        dbg!(&self);
         match self.mode {
             DiffMode::Inactive => false,
             _ => true,
@@ -101,12 +103,14 @@ impl AutoDiffAttrs {
     }
 
     pub fn is_source(&self) -> bool {
+        dbg!(&self);
         match self.mode {
             DiffMode::Source => true,
             _ => false,
         }
     }
     pub fn apply_autodiff(&self) -> bool {
+        dbg!(&self);
         match self.mode {
             DiffMode::Inactive => false,
             DiffMode::Source => false,
@@ -121,11 +125,12 @@ impl AutoDiffAttrs {
         inputs: Vec<TypeTree>,
         output: TypeTree,
     ) -> AutoDiffItem {
+        dbg!(&self);
         AutoDiffItem { source, target, inputs, output, attrs: self }
     }
 }
 
-#[derive(Clone, Eq, PartialEq, Encodable, Decodable, Debug)]
+#[derive(Clone, Eq, PartialEq, Encodable, Decodable, Debug, HashStable_Generic)]
 pub struct AutoDiffItem {
     pub source: String,
     pub target: String,
@@ -134,16 +139,16 @@ pub struct AutoDiffItem {
     pub output: TypeTree,
 }
 
-impl<CTX: HashStableContext> HashStable<CTX> for AutoDiffItem {
-    fn hash_stable(&self, hcx: &mut CTX, hasher: &mut StableHasher) {
-        self.source.hash_stable(hcx, hasher);
-        self.target.hash_stable(hcx, hasher);
-        self.attrs.hash_stable(hcx, hasher);
-        for tt in &self.inputs {
-            tt.0.hash_stable(hcx, hasher);
-        }
-        //self.inputs.hash_stable(hcx, hasher);
-        self.output.0.hash_stable(hcx, hasher);
-    }
-}
+//impl<CTX: HashStableContext> HashStable<CTX> for AutoDiffItem {
+//    fn hash_stable(&self, hcx: &mut CTX, hasher: &mut StableHasher) {
+//        self.source.hash_stable(hcx, hasher);
+//        self.target.hash_stable(hcx, hasher);
+//        self.attrs.hash_stable(hcx, hasher);
+//        for tt in &self.inputs {
+//            tt.0.hash_stable(hcx, hasher);
+//        }
+//        //self.inputs.hash_stable(hcx, hasher);
+//        self.output.0.hash_stable(hcx, hasher);
+//    }
+//}
 

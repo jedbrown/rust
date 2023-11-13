@@ -700,11 +700,14 @@ fn check_link_name_xor_ordinal(
 }
 
 fn autodiff_attrs(tcx: TyCtxt<'_>, id: DefId) -> AutoDiffAttrs {
-    let attrs = tcx.get_attrs(id, sym::autodiff_into);
+    dbg!("autodiff_attrs({:?})", id);
+    //let attrs = tcx.get_attrs(id, sym::autodiff_into);
+    let attrs = tcx.get_attrs(id, sym::autodiff);
 
     let attrs = attrs
         .into_iter()
-        .filter(|attr| attr.name_or_empty() == sym::autodiff_into)
+        .filter(|attr| attr.name_or_empty() == sym::autodiff)
+        //.filter(|attr| attr.name_or_empty() == sym::autodiff_into)
         .collect::<Vec<_>>();
 
     // check for exactly one autodiff attribute on extern block

@@ -701,6 +701,7 @@ pub(crate) unsafe fn enzyme_ad(
     diag_handler: &rustc_errors::Handler,
     item: AutoDiffItem,
 ) -> Result<(), FatalError> {
+    dbg!("cg_llvm enzyme_ad");
     let autodiff_mode = item.attrs.mode;
     let rust_name = item.source;
     let rust_name2 = &item.target;
@@ -817,6 +818,7 @@ pub(crate) unsafe fn differentiate(
     _typetrees: FxHashMap<String, DiffTypeTree>,
     _config: &ModuleConfig,
 ) -> Result<(), FatalError> {
+    dbg!("cg_llvm differentiate");
     let llmod = module.module_llvm.llmod();
     let llcx = &module.module_llvm.llcx;
     let diag_handler = cgcx.create_diag_handler();

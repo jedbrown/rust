@@ -1575,6 +1575,7 @@ fn start_executing_work<B: ExtraBackendMethods>(
                 }
 
                 Message::AddAutoDiffItems(mut items) => {
+                    dbg!("AddAutoDiffItems");
                     autodiff_items.append(&mut items);
                 }
 
@@ -2030,6 +2031,7 @@ impl<B: ExtraBackendMethods> OngoingCodegen<B> {
     }
 
     pub fn submit_autodiff_items(&self, items: Vec<AutoDiffItem>) {
+        dbg!("submit_autodiff_items");
         drop(self.coordinator.sender.send(Box::new(Message::<B>::AddAutoDiffItems(items))));
     }
 

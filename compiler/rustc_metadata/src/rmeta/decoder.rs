@@ -1352,6 +1352,11 @@ impl<'a, 'tcx> CrateMetadataRef<'a> {
                 // but we assume that someone passing a constructor ID actually wants to look at
                 // the attributes on the corresponding struct or variant.
                 let def_key = self.def_key(id);
+                if def_key.disambiguated_data.data != DefPathData::Ctor {
+                    dbg!(&def_key);
+                    dbg!(&def_key.disambiguated_data.data);
+                    panic!("no attributes for {:?}", def_key);
+                }
                 assert_eq!(def_key.disambiguated_data.data, DefPathData::Ctor);
                 let parent_id = def_key.parent.expect("no parent for a constructor");
                 self.root

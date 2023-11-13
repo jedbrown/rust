@@ -267,6 +267,7 @@ impl WriteBackendMethods for LlvmCodegenBackend {
         typetrees: FxHashMap<String, Self::TypeTree>,
         config: &ModuleConfig,
     ) -> Result<(), FatalError> {
+        dbg!("cg_llvm autodiff");
         unsafe { back::write::differentiate(module, cgcx, diff_fncs, typetrees, config) }
     }
 
