@@ -953,7 +953,10 @@ impl<'a, 'tcx> Resolver<'a, 'tcx> {
                 // If we already loaded this builtin macro, give a better error message than 'no such builtin macro'.
                 match mem::replace(builtin_macro, BuiltinMacroState::AlreadySeen(item.span)) {
                     BuiltinMacroState::NotYetSeen(ext) => {
+                        dbg!("not seen yet");
+                        dbg!(&builtin_name);
                         result.kind = ext;
+                        dbg!(&result.macro_kind());
                         rule_spans = Vec::new();
                         if item.id != ast::DUMMY_NODE_ID {
                             self.builtin_macro_kinds

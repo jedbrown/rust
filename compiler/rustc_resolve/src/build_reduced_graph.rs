@@ -30,6 +30,8 @@ use rustc_span::hygiene::{ExpnId, LocalExpnId, MacroKind};
 use rustc_span::symbol::{kw, sym, Ident, Symbol};
 use rustc_span::Span;
 
+use crate::ast::AttrKind;
+
 use std::cell::Cell;
 
 type Res = def::Res<NodeId>;
@@ -167,6 +169,7 @@ impl<'a, 'tcx> Resolver<'a, 'tcx> {
     }
 
     pub(crate) fn get_macro_by_def_id(&mut self, def_id: DefId) -> MacroData {
+        dbg!(&def_id);
         if let Some(macro_data) = self.macro_map.get(&def_id) {
             return macro_data.clone();
         }
@@ -690,6 +693,7 @@ impl<'a, 'b, 'tcx> BuildReducedGraphVisitor<'a, 'b, 'tcx> {
             ItemKind::Fn(..) => {
                 let res = Res::Def(DefKind::Fn, def_id);
                 self.r.define(parent, ident, ValueNS, (res, vis, sp, expansion));
+                dbg!(&ident.name);
 
                 // Functions introducing procedural macros reserve a slot
                 // in the macro namespace as well (see #52225).
@@ -1161,6 +1165,7 @@ impl<'a, 'b, 'tcx> BuildReducedGraphVisitor<'a, 'b, 'tcx> {
         if attr::contains_name(&item.attrs, sym::proc_macro) {
             return Some((MacroKind::Bang, item.ident, item.span));
         } else if attr::contains_name(&item.attrs, sym::proc_macro_attribute) {
+            dbg!(&item);
             return Some((MacroKind::Attr, item.ident, item.span));
         } else if let Some(attr) = attr::find_by_name(&item.attrs, sym::proc_macro_derive) {
             if let Some(nested_meta) = attr.meta_item_list().and_then(|list| list.get(0).cloned()) {
@@ -1169,6 +1174,23 @@ impl<'a, 'b, 'tcx> BuildReducedGraphVisitor<'a, 'b, 'tcx> {
                 }
             }
         }
+        if item.attrs.len() == 1 {
+            let attr = &item.attrs[0];
+            if let AttrKind::Normal(normal) = &attr.kind {
+                if normal.item.path == sym::proc_macro {
+                    dbg!(attr);
+                } else if normal.item.path == sym::proc_macro_attribute {
+                    dbg!(attr);
+                } else if normal.item.path == sym::test {
+                    dbg!(attr);
+                } else if normal.item.path == sym::autodiff {
+                    dbg!(attr);
+                } else {
+                    dbg!(attr);
+                }
+            }
+        }
+        //dbg!(&item);
         None
     }
 
@@ -1198,10 +1220,17 @@ impl<'a, 'b, 'tcx> BuildReducedGraphVisitor<'a, 'b, 'tcx> {
             ItemKind::MacroDef(def) => {
                 let (ext, rule_spans) = self.r.compile_macro(item, self.r.tcx.sess.edition());
                 let ext = Lrc::new(ext);
+                dbg!(&item.ident);
+                dbg!(&item.span);
+                dbg!(&def.body);
+                dbg!(&def.macro_rules);
+                // ext doesn't implement debug
+                //dbg!(&ext);
                 (ext, item.ident, item.span, def.macro_rules, rule_spans)
             }
             ItemKind::Fn(..) => match self.proc_macro_stub(item) {
                 Some((macro_kind, ident, span)) => {
+                    dbg!(&ident);
                     self.r.proc_macro_stubs.insert(def_id);
                     (self.r.dummy_ext(macro_kind), ident, span, false, Vec::new())
                 }
@@ -1298,6 +1327,7 @@ impl<'a, 'b, 'tcx> Visitor<'b> for BuildReducedGraphVisitor<'a, 'b, 'tcx> {
         let orig_module_scope = self.parent_scope.module;
         self.parent_scope.macro_rules = match item.kind {
             ItemKind::MacroDef(..) => {
+                dbg!(&item.ident.name);
                 let macro_rules_scope = self.define_macro(item);
                 visit::walk_item(self, item);
                 macro_rules_scope

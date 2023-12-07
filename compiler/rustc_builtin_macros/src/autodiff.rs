@@ -1,16 +1,10 @@
 use crate::errors;
 use crate::util::check_builtin_macro_attribute;
-//use rustc_ast::expand::allocator::{
-//    global_fn_name, AllocatorMethod, AllocatorMethodInput, AllocatorTy, ALLOCATOR_METHODS,
-//};
-//use rustc_middle::middle::autodiff_attrs::{AutoDiffItem, DiffActivity, DiffMode};
 use rustc_ast::ptr::P;
-use rustc_ast::{self as ast};//, AttrVec, Expr, FnHeader, FnSig, Generics, Param, StmtKind};
-//use rustc_ast::{Fn, ItemKind, Mutability, Stmt, Ty, TyKind, Unsafe};
+use rustc_ast::{self as ast};
 use rustc_ast::ItemKind;
 use rustc_expand::base::{Annotatable, ExtCtxt};
 use rustc_span::symbol::Ident;
-//use rustc_span::symbol::{kw, sym, Ident, Symbol};
 use rustc_span::symbol::sym;
 use rustc_span::Span;
 use thin_vec::thin_vec;
@@ -63,11 +57,11 @@ pub fn expand_ad(
         generics: ast::Generics::default(),
         body: None,
     }));
+    let attrs = thin_vec![ecx.attr_word(sym::rustc_std_internal_symbol, span)];
     let item = ecx.item(
         span,
         Ident::from_str_and_span("foobar", span),
-        // thin_vec![self.cx.attr_word(sym::rustc_std_internal_symbol, self.span)]
-        thin_vec![],
+        attrs,
         kind,
     );
     let ditem = Annotatable::Item(item);

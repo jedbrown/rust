@@ -86,7 +86,6 @@ impl<CTX: HashStableContext> HashStable<CTX> for AutoDiffAttrs {
 
 impl AutoDiffAttrs {
     pub fn inactive() -> Self {
-        dbg!("creating inactive adattrs");
         AutoDiffAttrs {
             mode: DiffMode::Inactive,
             ret_activity: DiffActivity::None,
@@ -95,10 +94,12 @@ impl AutoDiffAttrs {
     }
 
     pub fn is_active(&self) -> bool {
-        dbg!(&self);
         match self.mode {
             DiffMode::Inactive => false,
-            _ => true,
+            _ => {
+                dbg!(&self);
+                true
+            },
         }
     }
 
@@ -110,11 +111,13 @@ impl AutoDiffAttrs {
         }
     }
     pub fn apply_autodiff(&self) -> bool {
-        dbg!(&self);
         match self.mode {
             DiffMode::Inactive => false,
             DiffMode::Source => false,
-            _ => true,
+            _ => {
+                dbg!(&self);
+                true
+            },
         }
     }
 

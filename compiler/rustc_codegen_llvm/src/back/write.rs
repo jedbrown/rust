@@ -819,6 +819,8 @@ pub(crate) unsafe fn differentiate(
     _config: &ModuleConfig,
 ) -> Result<(), FatalError> {
     dbg!("cg_llvm differentiate");
+    dbg!(&diff_items);
+
     let llmod = module.module_llvm.llmod();
     let llcx = &module.module_llvm.llcx;
     let diag_handler = cgcx.create_diag_handler();

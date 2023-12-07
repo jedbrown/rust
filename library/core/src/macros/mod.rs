@@ -1416,20 +1416,6 @@ pub(crate) mod builtin {
         };
     }
 
-    /// Differentiate function
-    #[unstable(
-        feature = "autodiff",
-        issue = "29598",
-        reason = "autodiff is not stable enough"
-    )]
-    #[allow_internal_unsafe]
-    #[allow_internal_unstable(autodiff)]
-    #[rustc_builtin_macro]
-    pub macro autodiff($item:item) {
-        /* compiler built-in */
-    }
-    //#[macro_export]
-
     /// Parses a file as an expression or an item according to the context.
     ///
     /// **Warning**: For multi-file Rust projects, the `include!` macro is probably not what you
@@ -1577,6 +1563,21 @@ pub(crate) mod builtin {
         (true) => {{ /* compiler built-in */ }};
         (false) => {{ /* compiler built-in */ }};
     }
+
+    /// Differentiate function
+    #[unstable(
+        feature = "autodiff",
+        issue = "29598",
+        reason = "autodiff is not stable enough"
+    )]
+    #[cfg(not(bootstrap))]
+    #[rustc_builtin_macro]
+    pub macro autodiff($item:item) {
+        /* compiler built-in */
+    }
+    //#[allow_internal_unsafe]
+    //#[allow_internal_unstable(autodiff)]
+
 
     /// Attribute macro used to apply derive macros.
     ///

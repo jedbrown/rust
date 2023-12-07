@@ -2396,7 +2396,7 @@ impl CheckAttrVisitor<'_> {
         }
     }
 
-    /// Checks if `#[autodiff]` is applied to an item other than a foreign module.
+    /// Checks if `#[autodiff]` is applied to an item other than a function item.
     fn check_autodiff(&self, _hir_id: HirId, _attr: &Attribute, span: Span, target: Target) {
         dbg!("check_autodiff");
         match target {

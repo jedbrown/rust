@@ -253,10 +253,12 @@ where
         let autodiff_active = characteristic_def_id
             .map(|x| cx.tcx.autodiff_attrs(x).is_active())
             .unwrap_or(false);
-
-        if !autodiff_active && visibility == Visibility::Hidden && can_be_internalized {
+        if autodiff_active {
             dbg!("place_mono_items: autodiff_active");
             dbg!(&mono_item);
+        }
+
+        if !autodiff_active && visibility == Visibility::Hidden && can_be_internalized {
             internalization_candidates.insert(mono_item);
         }
         let size_estimate = mono_item.size_estimate(cx.tcx);
@@ -1160,7 +1162,6 @@ fn collect_and_partition_mono_items(tcx: TyCtxt<'_>, (): ()) -> (&DefIdSet, &[Au
         .filter_map(|(item, instance)| {
             let target_id = instance.def_id();
             let target_attrs = tcx.autodiff_attrs(target_id);
-            dbg!(target_attrs);
             if !target_attrs.apply_autodiff() {
                 return None;
             }
@@ -1275,7 +1276,7 @@ fn collect_and_partition_mono_items(tcx: TyCtxt<'_>, (): ()) -> (&DefIdSet, &[Au
     }
 
     if autodiff_items.len() > 0 {
-        println!("AUTODIFF_ITEMS");
+        println!("AUTODIFF ITEMS EXIST");
         for item in &mut *autodiff_items {
             dbg!(&item);
         }
