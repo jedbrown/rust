@@ -1,5 +1,4 @@
-use autodiff::autodiff;
-
+#![feature(autodiff)]
 #[autodiff(d_rosenbrock, Reverse, Active)]
 fn rosenbrock(#[dup] x: &[f64; 2]) -> f64 {
     let mut res = 0.0;

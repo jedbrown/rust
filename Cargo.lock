@@ -3,6 +3,10 @@
 version = 3
 
 [[package]]
+name = "ad"
+version = "0.1.0"
+
+[[package]]
 name = "addr2line"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4304,6 +4308,7 @@ dependencies = [
 name = "rustc_monomorphize"
 version = "0.0.0"
 dependencies = [
+ "rustc_ast",
  "rustc_data_structures",
  "rustc_errors",
  "rustc_fluent_macro",
